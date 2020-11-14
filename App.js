@@ -1,21 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, View } from 'react-native';
 import Calendar from './components/Calendar';
 import Navbar from './components/Navbar';
 import { getStartWeek, moveWeekBackwards, moveWeekForward } from './services/calendar'; 
 
 export default function App() {
-  let week = getStartWeek();
+  //local state in order to update the week calendar 
+  const [week,setWeek] = useState(getStartWeek())
   
   const moveBackwards = () => {
-    week = moveWeekBackwards();
+    setWeek(moveWeekBackwards());
   };
   
   const moveForward = () => {
-    week = moveWeekForward();
+   setWeek(moveWeekForward());
   };
-
+  
   return (
     <View style={styles.container}>
       <Navbar addEvent={() => { setAddModalVisible(true) }} />

@@ -1,7 +1,9 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useEffect} from 'react';
+import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
 import Date from './Date';
 import MoveWeekButton from './MoveWeekButton';
+
+const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
@@ -11,16 +13,21 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        margin: 10
     },
     header: {
         fontSize: 30,
         padding: 10,
     },
+    scrollview: {
+        height:windowHeight
+    }
 });
 
 const Calendar = (props) => {
     const { week } = props;
+    
     const dates = week.dates.map(({date, events}) => (<Date date={date} events={events} />));
     return (
     <View style={styles.container}>
@@ -29,9 +36,12 @@ const Calendar = (props) => {
             <Text style={styles.header}>Week overview</Text>
             <MoveWeekButton title=">>" moveWeek={props.moveForward} />
         </View>
-        <View>
+        <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
+            style={styles.scrollview}
+        >
             {dates}
-        </View>
+        </ScrollView>
     </View>
     );
 };
