@@ -1,0 +1,12 @@
+{
+  "name": "EpioneScheduler",
+  "displayName": "EpioneScheduler",
+  "expo": {
+    "name": "EpioneScheduler",
+    "slug": "EpioneScheduler",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
