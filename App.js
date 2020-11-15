@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import { StyleSheet, View } from 'react-native';
 import Calendar from './components/Calendar';
 import Navbar from './components/Navbar';
+import { Provider as StateProvider } from 'react-redux'
+import store from './store/store'
 import { getStartWeek, moveWeekBackwards, moveWeekForward } from './services/calendar'; 
 
 export default function App() {
@@ -19,10 +21,12 @@ export default function App() {
   
   return (
     <View style={styles.container}>
-      <Navbar addEvent={() => { setAddModalVisible(true) }} />
-      <Calendar week={week} moveBackwards={moveBackwards} moveForward={moveForward} />
-      <StatusBar style="auto" />
-    </View>
+      <StateProvider store={store}>
+        <Navbar addEvent={() => { setAddModalVisible(true) }} />
+        <Calendar week={week} moveBackwards={moveBackwards} moveForward={moveForward} />
+        <StatusBar style="auto" />
+      </StateProvider>
+    </View>    
   );
 }
 

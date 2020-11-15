@@ -11,7 +11,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingLeft: 10,
-        paddingRight: 10
+        paddingRight: 10,
+        margin: 10
     },
     text: {
         color: '#E3655B',
