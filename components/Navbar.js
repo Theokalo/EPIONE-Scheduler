@@ -20,11 +20,16 @@ const styles = StyleSheet.create({
     },
 });
 
-const Navbar = (props) => (
-<View style={styles.container}>
-    <Text style={styles.text}>EPIONE Scheduler</Text>
-    <Button title="Add Event" color='#3891A6' onPress={() => { props.addEvent() }} />
-</View>
-);
+const Navbar = (props) => {
+    const open = (e) => {
+        props.addEvent && props.addEvent(e)
+    }
+    return (
+        <View style={styles.container}>
+            <Text style={styles.text}>EPIONE Scheduler</Text>
+            <Button title="Add Event" color='#3891A6' onPress={() => { open() }} />
+        </View>
+    )
+};
 
 export default Navbar;

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Event from './Event';
 import NoEvents from './NoEvents';
+import { useSelector } from 'react-redux';
 
 const styles = StyleSheet.create({
     container: {
@@ -26,12 +27,13 @@ const styles = StyleSheet.create({
     }
 });
 
-const Date = ({date, events}) => {
-    const dateEvents = events.length > 0 ?
-    events.map(({description, title}) => (<Event title={title} description={description} />)) :
-    <NoEvents />
-    ;
-    
+const Date = ({date}) => {
+    const events = useSelector(state => state.eventsReducer.r_events)
+    const dailyEvents = events.filter(event => event.date.isSame(date));
+    const dateEvents = dailyEvents.length > 0 ?
+    dailyEvents.map(({description, title, start, end}) => (<Event title={title} description={description} start={start} end={end} />)) :
+    <NoEvents />;
+
     return (
     <View style={styles.container}>
         <Text style={styles.title}>{date}</Text>

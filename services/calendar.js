@@ -1,22 +1,22 @@
 import moment from 'moment';
 
-const EVENTS = [];
+// const EVENTS = []
 
 let pivot = moment();
 
-export const addOneEvent = (event) => {
-    EVENTS.push(event);
-};
+// export const addOneEvent = (event) => {
+//     EVENTS.push(event);
+// };
 
 const generateOneWeek = () => {
     let startOfWeek = pivot.startOf('week');
     return [...Array(7).keys()].map(
         offset => { 
             const date = moment(startOfWeek).add(offset, 'days');
-            const events = EVENTS.filter(event => event.date.isSame(date));
+            // const events = EVENTS.filter(event => event.date.isSame(date));
             return {
                 date: date.format("ddd DD MMM YYYY"),
-                events
+                // events
             }
         }
     );
