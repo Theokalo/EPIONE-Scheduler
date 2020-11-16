@@ -31,7 +31,7 @@ const Date = ({date}) => {
     const events = useSelector(state => state.eventsReducer.r_events)
     const dailyEvents = events.filter(event => event.date.isSame(date));
     const dateEvents = dailyEvents.length > 0 ?
-    dailyEvents.map(({description, title, start, end}) => (<Event title={title} description={description} start={start} end={end} />)) :
+    dailyEvents.map(({description, title, start, end, id}) => (<Event id={id} title={title} description={description} start={start} end={end} />)) :
     <NoEvents />;
 
     return (
