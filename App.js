@@ -20,14 +20,13 @@ export default function App() {
   const moveForward = () => {
    setWeek(moveWeekForward());
   };
-  console.log(modalAddVisible)
   return (
     <View style={styles.container}>
       <StateProvider store={store}>
         <Navbar addEvent={() => { setAddModalVisible(true) }} />
         <Calendar week={week} moveBackwards={moveBackwards} moveForward={moveForward} />
         <StatusBar style="auto" />
-        <ModalScreen visible={modalAddVisible} hide={() => {setAddModalVisible(false)}}/>
+        <ModalScreen visible={modalAddVisible} title={"Add Event"} hide={() => {setAddModalVisible(false)}}/>
       </StateProvider>
     </View>    
   );

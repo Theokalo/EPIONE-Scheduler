@@ -1,7 +1,8 @@
-import React, {useEffect, useRef} from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from 'react-redux';
+import ModalScreen from './ModalScreen';
 
 const styles = StyleSheet.create({
     container: {
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         //paddingLeft: 20,
         marginTop: 5,
-        backgroundColor: '#e6e6fa'
+        backgroundColor: '#e6e6fa',
     },
     subContainer: {
         flexDirection: 'column',
@@ -22,40 +23,18 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 15,
         alignSelf: 'flex-start',
-        //marginLeft: 10
     },
     title: {
         fontSize: 15,
         color:'#3891A6',
         alignSelf: 'flex-start',
-        //marginLeft: 10
-    },
-    icon: {
-        flexDirection:'column'
     }
 });
 
-// function usePrevious(value) {
-//     const ref = useRef();
-//     console.log(ref.current)
-//     useEffect(() => {
-//       ref.current = value;
-//     });
-//     return ref.current;
-// }
-
 const Event = (props) => {
     const dispatch = useDispatch();
-    //const {end} = props
-    // const prevAmount = usePrevious(end);
-    // useEffect(() => {
-    //     //if(prevAmount !== undefined) {
-    //         console.log(prevAmount, end)
-    //      //} 
-    //     //  else {
-    //     //     console.log(prevAmount.end > end)
-    //     // }
-    // }, [end])
+    const [modalAddVisible, setAddModalVisible] = useState(false);
+    const [editID, setEditID] = useState();
 
     const deleteConfirm = (id) => {
         Alert.alert(
@@ -87,6 +66,15 @@ const Event = (props) => {
         </View>   
         <View style={styles.subContainer}>
             <TouchableHighlight                
+                onPress={() => { setAddModalVisible(true); setEditID(props.id)}}
+            >
+              <Icon
+                name="edit"
+                size={20}
+                color="#ff9900"
+              />
+            </TouchableHighlight>
+            <TouchableHighlight                
                 onPress={() => { deleteConfirm(props.id)}}
             >
               <Icon
@@ -97,6 +85,7 @@ const Event = (props) => {
             </TouchableHighlight>
         </View>  
     </View>
+    <ModalScreen visible={modalAddVisible} title={'Edit Event'} editID={editID} hide={() => {setAddModalVisible(false)}}/>
     </>
     );
 };

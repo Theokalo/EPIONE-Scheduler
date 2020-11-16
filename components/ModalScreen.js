@@ -1,26 +1,26 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { StyleSheet, View, Modal, Alert, Text, TouchableHighlight, TextInput, Dimensions, ScrollView } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { TextInputMask } from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 
 const windowWidth = Dimensions.get('window').width;
 
 const ModalScreen = (props) => {
 
+  const storeEvents = useSelector(state => state.eventsReducer.r_events);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [maskDate, setMaskDate] = useState();
-  const [maskStartTime, setMaskStartTime] = useState();
-  const [maskEndTime, setMaskEndTime] = useState();
+  const [maskDate, setMaskDate] = useState('');
+  const [maskStartTime, setMaskStartTime] = useState('');
+  const [maskEndTime, setMaskEndTime] = useState('');
 
   const dispatch = useDispatch();
 
-  const confirmMsg = (msg) => {
+  const confirmMsg = (msg, atitle) => {
     Alert.alert(
-      "Confirmation message",
+      atitle,
       msg,
       [
         { text: "OK", onPress: () => console.log("OK Pressed") }
@@ -45,17 +45,19 @@ const ModalScreen = (props) => {
   const close = (e) => {
     props.hide && props.hide(e)
   }
-  // addin the event to Redux store
+  // adding the event to Redux store
   const addEvent = () => {
-    let compareTime = maskStartTime.localeCompare(maskEndTime)
     if (title === '' || maskDate === '' || maskStartTime === '' || maskEndTime === '' || description === '') {
+      let atitle = 'Error message'
       let msg = 'All fileds must be filled out'
-      confirmMsg(msg)
+      confirmMsg(msg, atitle)
     }
-    else if(compareTime === 1 || compareTime === 0){
+    else if(maskStartTime.localeCompare(maskEndTime) === 1 || maskStartTime.localeCompare(maskEndTime) === 0){
+      let atitle = 'Error message'
       let msg = 'End time must be bigger than Start time'
-      confirmMsg(msg)
+      confirmMsg(msg, atitle)
     } else {
+      let atitle = 'Confirmation message'
       let msg = "Event added succesfully"
       let date = ''
       let formatdate = ''
@@ -64,11 +66,11 @@ const ModalScreen = (props) => {
       if (array.length === 3){
         date = new Date(array[2],array[1]-1,array[0])
         formatdate = moment(date)
-      }    
-      console.log(maskStartTime.localeCompare(maskEndTime))    
+      }   
       const setEvent = () => ({type: "ADD", payload: {id:id, title:title,date:formatdate, startTime: maskStartTime, endTime: maskEndTime, description: description} });
       dispatch(setEvent())
-      confirmMsg(msg)
+      close()
+      confirmMsg(msg,atitle)
       setTitle('')
       setMaskDate()
       setMaskStartTime()
@@ -76,6 +78,54 @@ const ModalScreen = (props) => {
       setDescription('')
     }    
   }
+  // edit the event and store it to redux store
+  const editEvent = () => {
+    if (title === '' || maskDate === '' || maskStartTime === '' || maskEndTime === '' || description === '') {
+      let atitle = 'Error message'
+      let msg = 'All fileds must be filled out'
+      confirmMsg(msg, atitle)
+    }
+    else if(maskStartTime.localeCompare(maskEndTime) === 1 || maskStartTime.localeCompare(maskEndTime) === 0){
+      let atitle = 'Error message'
+      let msg = 'End time must be bigger than Start time'
+      confirmMsg(msg, atitle)
+    } else {
+      let atitle = 'Confirmation message'
+      let msg = "Event edit succesfully"
+      let date = ''
+      let formatdate = ''
+      let array = maskDate.split('/')
+      if (array.length === 3){
+        date = new Date(array[2],array[1]-1,array[0])
+        formatdate = moment(date)
+      }  
+      const setEvent = () => ({type: "EDIT", payload: {id:props.editID, title:title,date:formatdate, startTime: maskStartTime, endTime: maskEndTime, description: description} });
+      dispatch(setEvent())
+      close()
+      confirmMsg(msg,atitle)
+      setTitle('')
+      setMaskDate()
+      setMaskStartTime()
+      setMaskEndTime()
+      setDescription('')
+    }    
+  }
+  // check the props of the parent component and update the state
+  // if it's Add event or Edit event
+  useEffect(() => {
+    if (props.editID !== undefined) {
+      let editItem = storeEvents.filter(event => event.id === props.editID)
+      if (props.editID === editItem[0].id) {
+        let convertedDate = editItem[0].date.toDate().getDate()+'/'+(editItem[0].date.toDate().getMonth()+1)+'/'+editItem[0].date.toDate().getFullYear()
+        setTitle(editItem[0].title)
+        setMaskDate(convertedDate)
+        setMaskStartTime(editItem[0].startTime)
+        setMaskEndTime(editItem[0].endTime)
+        setDescription(editItem[0].description)
+      }    
+    }
+  }, [props])
+
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -88,8 +138,8 @@ const ModalScreen = (props) => {
       >
           <View style={styles.centeredView}>
             <ScrollView style={styles.modalView}>
-              <View style={styles.test}>
-                <Text style={styles.modalText}>Add new event!</Text>
+              <View style={styles.contentView}>
+                <Text style={styles.modalText}>{props.title}</Text>
                 <Text style={styles.modalText}>
                     Title
                 </Text>
@@ -155,12 +205,21 @@ const ModalScreen = (props) => {
                     placeholder="Brief description"
                     placeholderTextColor="grey" 
                 />
-                <TouchableHighlight
-                  style={{ ...styles.addButton}}
-                  onPress={() => { addEvent()}}
-                >
-                  <Text style={styles.textStyle}>Add</Text>
-                </TouchableHighlight>
+                {props.title === 'Add Event' ?
+                  <TouchableHighlight
+                    style={{ ...styles.addButton}}
+                    onPress={() => { addEvent()}}
+                  >
+                    <Text style={styles.textStyle}>Add</Text>
+                  </TouchableHighlight>
+                  :
+                  <TouchableHighlight
+                    style={{ ...styles.addButton}}
+                    onPress={() => { editEvent()}}
+                  >
+                    <Text style={styles.textStyle}>Edit</Text>
+                  </TouchableHighlight>
+                }
                 <TouchableHighlight
                   style={{ ...styles.closeButton }}
                   onPress={() => { close()}}
@@ -205,7 +264,7 @@ const styles = StyleSheet.create({
       shadowRadius: 3.84,
       elevation: 5
     },
-    test:{
+    contentView:{
       paddingBottom: 60
     },
     addButton: {

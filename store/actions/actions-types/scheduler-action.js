@@ -1,2 +1,3 @@
 export const ADD = "ADD"
-export const ADD = "DELETE"
+export const DELETE = "DELETE"
+export const EDIT = "EDIT"
